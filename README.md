@@ -1,70 +1,37 @@
-# NetTalk
+# 💬 LANChat
 
-💬 NetTalk (LAN Chat Application)
+LANChat is a **real-time LAN-based chat application** that allows users to create and join chat rooms with a secure PIN system.  
+It features **typing indicators, chat history, file sharing support, and room management** — all running seamlessly over WebSocket.  
 
-A real-time LAN-based chat application built with Python (WebSocket, HTTP Server) and Vanilla JavaScript.
-It allows users on the same network to create rooms, join with a PIN, chat instantly, see typing indicators, and (soon) share files.
+---
 
-✨ Features
+## ✨ Features
 
-🏠 Create & Join Rooms with unique 4-digit PINs
+- 🔒 **Room Creation with PIN Authentication** – secure and private chat rooms  
+- 👥 **Join/Leave Rooms** – flexible room management  
+- 💬 **Real-time Messaging** – instant message delivery with timestamps  
+- ⌨️ **Typing Indicators** – see when others are typing  
+- 🕑 **Chat History** – keeps track of recent messages  
+- 📂 **File Sharing Support** – send and receive files in chat  
+- 🌐 **LAN Hosting** – works without internet, just on local network  
 
-👥 List Active Rooms with user counts
+---
 
-💬 Real-time Messaging with chat history
+## 🚀 Tech Stack
 
-✍️ Typing Indicators ("User is typing...")
+- **Frontend**: HTML, CSS, JavaScript (Vanilla JS, WebSocket API)  
+- **Backend**: Python (asyncio, websockets, http.server)  
+- **Communication**: WebSocket Protocol  
 
-🟢 Online Avatars with random colors
+---
 
-📂 Planned Feature: File Sharing
+## 📷 Screenshot
 
-🛠️ Tech Stack
+![Screenshot](assets/image.png)
 
-Backend: Python, asyncio, websockets, http.server
+---
 
-Frontend: HTML, CSS, JavaScript (Vanilla)
+## ⚙️ Installation & Usage
 
-Protocol: WebSocket for real-time communication
-
-🚀 Getting Started
-1️⃣ Install dependencies
-
-Make sure you have Python 3.8+ installed.
-Install the required package:
-
-pip install websockets
-
-2️⃣ Run the server
-python server.py
-
-
-WebSocket will run on: ws://localhost:6789
-
-HTTP Server will run on: http://localhost:8000
-
-3️⃣ Open in browser
-
-Navigate to:
-
-http://localhost:8000/index.html
-
-
-Now you can chat with multiple users on the same LAN network. 🎉
-
-
-🔮 Roadmap
-
-✅ Typing indicators
-
-✅ Chat history
-
-🔜 Mobile responsive design improvements
-
-🤝 Contributing
-
-Pull requests are welcome! For major changes, please open an issue first to discuss.
-
-📜 License
-
-MIT License © 2025 [Subodh]
+1. **Clone the repository**
+ 
