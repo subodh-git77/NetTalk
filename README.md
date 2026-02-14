@@ -37,7 +37,7 @@ It features **typing indicators, chat history, file sharing support, and room ma
 
 ```bash
 git clone https://github.com/subodh-git77/NetTalk.git
-cd LANChat
+cd NetTalk
 ```
 
 ### 2️⃣ Install Dependencies
