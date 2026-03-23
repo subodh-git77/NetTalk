@@ -22,7 +22,6 @@ def generate_pin(length: int = 4) -> str:
     return ''.join(secrets.choice(string.digits) for _ in range(length))
 
 async def broadcast(message: str, room_id: str, sender=None):
-    """Send message to all clients in a room except sender"""
     if room_id not in rooms:
         return
     dead = []
@@ -36,7 +35,6 @@ async def broadcast(message: str, room_id: str, sender=None):
     for d in dead:
         rooms[room_id]["clients"].pop(d, None)
 
-    # auto delete empty room
     if room_id in rooms and not rooms[room_id]["clients"]:
         del rooms[room_id]
 
@@ -57,7 +55,6 @@ async def handler(websocket):
 
             action = data.get("action")
 
-            # CREATE ROOM
             if action == "create_room":
                 room_id = generate_room_id()
                 pin = generate_pin()
@@ -68,7 +65,6 @@ async def handler(websocket):
                     "pin": pin
                 }))
 
-            # LIST ROOMS
             elif action == "list_rooms":
                 room_list = [
                     {"room_id": rid, "users": len(info["clients"])}
@@ -79,7 +75,6 @@ async def handler(websocket):
                     "rooms": room_list
                 }))
 
-            # JOIN ROOM
             elif action == "join_room":
                 pin_in = str(data.get("pin") or "").strip()
                 username = (data.get("username") or "Guest").strip() or "Guest"
@@ -91,7 +86,6 @@ async def handler(websocket):
                         break
 
                 if room_id:
-                    # Remove from previous room
                     if current_room and websocket in rooms.get(current_room, {}).get("clients", {}):
                         rooms[current_room]["clients"].pop(websocket, None)
 
@@ -104,11 +98,9 @@ async def handler(websocket):
                         "message": f"✅ Joined room {room_id}"
                     }))
 
-                    # Send history
                     for msg in rooms[room_id]["history"]:
                         await websocket.send(msg)
 
-                    # Notify others
                     await broadcast(json.dumps({
                         "type": "status",
                         "message": f"{username} joined the room"
@@ -120,7 +112,6 @@ async def handler(websocket):
                         "message": "Invalid PIN: No room found"
                     }))
 
-            # LEAVE ROOM
             elif action == "leave_room":
                 if current_room and current_room in rooms:
                     user = rooms[current_room]["clients"].pop(websocket, None)
@@ -137,7 +128,6 @@ async def handler(websocket):
                         del rooms[current_room]
                 current_room = None
 
-            # CHAT
             elif action == "chat":
                 if not current_room:
                     await websocket.send(json.dumps({
@@ -150,7 +140,6 @@ async def handler(websocket):
                 if not msg_text:
                     continue
 
-                # Updated timestamp to ISO 8601 format with UTC 'Z'
                 timestamp = datetime.utcnow().isoformat() + "Z"
                 payload = json.dumps({
                     "type": "chat",
@@ -159,16 +148,13 @@ async def handler(websocket):
                     "time": timestamp
                 })
 
-                # save history
                 hist = rooms[current_room]["history"]
                 hist.append(payload)
                 if len(hist) > 50:
                     hist.pop(0)
 
-                # broadcast to others
                 await broadcast(payload, current_room, sender=websocket)
 
-            # TYPING INDICATORS
             elif action == "typing":
                 if current_room:
                     await broadcast(json.dumps({
@@ -203,19 +189,20 @@ async def handler(websocket):
                 del rooms[current_room]
 
 # ----------------------------
-# Start Servers
+# Start Servers (FIXED PORT)
 # ----------------------------
+PORT = int(os.environ.get("PORT", 10000))
+
 async def start_websocket():
-    async with websockets.serve(handler, "0.0.0.0", 6789):
-        print("✅ WebSocket running at ws://0.0.0.0:6789")
+    async with websockets.serve(handler, "0.0.0.0", PORT):
+        print(f"✅ WebSocket running on port {PORT}")
         await asyncio.Future()
 
 def start_http():
-    PORT = 8000
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
-    handler = http.server.SimpleHTTPRequestHandler
-    with socketserver.TCPServer(("", PORT), handler) as httpd:
-        print(f"✅ HTTP running at http://0.0.0.0:{PORT}")
+    handler_http = http.server.SimpleHTTPRequestHandler
+    with socketserver.TCPServer(("", PORT), handler_http) as httpd:
+        print(f"✅ HTTP running on port {PORT}")
         httpd.serve_forever()
 
 if __name__ == "__main__":
