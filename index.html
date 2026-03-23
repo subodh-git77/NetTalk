@@ -338,7 +338,8 @@
         function connect() {
           ws = new WebSocket(
             (location.protocol === "https:" ? "wss://" : "ws://") +
-              location.host,
+              location.host +
+              "/ws" // ✅ updated to match server endpoint
           );
 
           ws.onopen = () => {
@@ -357,7 +358,7 @@
 
             if (data.type === "room_created") {
               alert(
-                `✅ Room Created!\nRoom ID: ${data.room_id}\nPIN: ${data.pin}`,
+                `✅ Room Created!\nRoom ID: ${data.room_id}\nPIN: ${data.pin}`
               );
             } else if (data.type === "room_list") {
               if (!data.rooms.length) alert("No active rooms.");
@@ -384,7 +385,7 @@
                 data.user,
                 data.message,
                 data.user === username,
-                data.time,
+                data.time
               );
             } else if (data.type === "status") {
               appendSystemMessage(data.message);
@@ -422,7 +423,7 @@
                 action: "join_room",
                 pin: pin,
                 username: username,
-              }),
+              })
             );
           } else {
             alert("Please enter a valid 4-digit PIN.");
@@ -536,16 +537,13 @@
           const timeEl = document.createElement("small");
 
           if (time) {
-            // Try parse time string to Date object
             const date = new Date(time);
             if (!isNaN(date.getTime())) {
-              // Display local time in HH:MM format
               timeEl.textContent = date.toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
               });
             } else {
-              // fallback to raw time string
               timeEl.textContent = time;
             }
           } else {
