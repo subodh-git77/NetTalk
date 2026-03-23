@@ -41,7 +41,12 @@ async def broadcast(message: str, room_id: str, sender=None):
 # ----------------------------
 # WebSocket Handler
 # ----------------------------
-async def handler(websocket):
+async def handler(websocket, path):
+    # Only accept WebSocket connections, ignore normal HTTP
+    if path != "/ws":
+        await websocket.close()
+        return
+
     current_room = None
     username = None
 
@@ -189,23 +194,15 @@ async def handler(websocket):
                 del rooms[current_room]
 
 # ----------------------------
-# Start Servers (FIXED PORTS)
+# Start Server (single PORT for Render)
 # ----------------------------
-PORT = int(os.environ.get("PORT", 10000))       # WebSocket port
-HTTP_PORT = PORT + 1                            # HTTP server on different port
+PORT = int(os.environ.get("PORT", 10000))
 
+# Start WebSocket server with /ws path only
 async def start_websocket():
-    async with websockets.serve(handler, "0.0.0.0", PORT):
-        print(f"✅ WebSocket running on port {PORT}")
+    async with websockets.serve(handler, "0.0.0.0", PORT, ping_interval=None):
+        print(f"✅ WebSocket running on port {PORT} (only /ws path)")
         await asyncio.Future()  # keep running
 
-def start_http():
-    os.chdir(os.path.dirname(os.path.abspath(__file__)))
-    handler_http = http.server.SimpleHTTPRequestHandler
-    with socketserver.TCPServer(("", HTTP_PORT), handler_http) as httpd:
-        print(f"✅ HTTP running on port {HTTP_PORT}")
-        httpd.serve_forever()
-
 if __name__ == "__main__":
-    threading.Thread(target=start_http, daemon=True).start()
     asyncio.run(start_websocket())
