@@ -189,20 +189,21 @@ async def handler(websocket):
                 del rooms[current_room]
 
 # ----------------------------
-# Start Servers (FIXED PORT)
+# Start Servers (FIXED PORTS)
 # ----------------------------
-PORT = int(os.environ.get("PORT", 10000))
+PORT = int(os.environ.get("PORT", 10000))       # WebSocket port
+HTTP_PORT = PORT + 1                            # HTTP server on different port
 
 async def start_websocket():
     async with websockets.serve(handler, "0.0.0.0", PORT):
         print(f"✅ WebSocket running on port {PORT}")
-        await asyncio.Future()
+        await asyncio.Future()  # keep running
 
 def start_http():
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
     handler_http = http.server.SimpleHTTPRequestHandler
-    with socketserver.TCPServer(("", PORT), handler_http) as httpd:
-        print(f"✅ HTTP running on port {PORT}")
+    with socketserver.TCPServer(("", HTTP_PORT), handler_http) as httpd:
+        print(f"✅ HTTP running on port {HTTP_PORT}")
         httpd.serve_forever()
 
 if __name__ == "__main__":
