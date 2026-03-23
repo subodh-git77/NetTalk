@@ -11,9 +11,9 @@ It features **typing indicators, chat history, file sharing support, and room ma
 - 👥 **Join/Leave Rooms** – Flexible room management  
 - 💬 **Real-time Messaging** – Instant message delivery with timestamps  
 - ⌨️ **Typing Indicators** – See when others are typing  
-- 🕑 **Chat History** – Keeps track of recent messages  
+<!-- - 🕑 **Chat History** – Keeps track of recent messages  
 - 📂 **File Sharing Support** – Send and receive files in chat  
-- 🌐 **LAN Hosting** – Works without internet, just on local network  
+- 🌐 **LAN Hosting** – Works without internet, just on local network  -->
 
 ---
 
